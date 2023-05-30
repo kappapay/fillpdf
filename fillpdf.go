@@ -21,7 +21,6 @@ package fillpdf
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -46,22 +45,45 @@ type Options struct {
 	Overwrite bool
 	// Flatten will flatten the document making the form fields no longer editable
 	Flatten bool
+	// TempDir will be used to save temporary pdf files
+	TempDir string
 }
 
 func defaultOptions() Options {
 	return Options{
 		Overwrite: true,
 		Flatten:   true,
+		TempDir:   "",
+	}
+}
+
+type OptionsFunc func(options *Options)
+
+func WithOverwrite(v bool) func(options *Options) {
+	return func(options *Options) {
+		options.Overwrite = v
+	}
+}
+
+func WithFlatten(v bool) func(options *Options) {
+	return func(options *Options) {
+		options.Flatten = v
+	}
+}
+
+func WithTempDir(v string) func(options *Options) {
+	return func(options *Options) {
+		options.TempDir = v
 	}
 }
 
 // Fill a PDF form with the specified form values and create a final filled PDF file.
 // The options parameter alters few aspects of the generation.
-func Fill(form Form, formPDFFile, destPDFFile string, options ...Options) (err error) {
+func Fill(form Form, formPDFFile, destPDFFile string, options ...OptionsFunc) (err error) {
 	// If the user provided the options we overwrite the defaults with the given struct.
 	opts := defaultOptions()
-	if len(options) > 0 {
-		opts = options[0]
+	for _, o := range options {
+		o(&opts)
 	}
 
 	// Get the absolute paths.
@@ -89,7 +111,7 @@ func Fill(form Form, formPDFFile, destPDFFile string, options ...Options) (err e
 	}
 
 	// Create a temporary directory.
-	tmpDir, err := ioutil.TempDir("", "fillpdf-")
+	tmpDir, err := os.MkdirTemp(opts.TempDir, "fillpdf-")
 	if err != nil {
 		return fmt.Errorf("failed to create temporary directory: %v", err)
 	}

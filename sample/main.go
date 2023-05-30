@@ -14,7 +14,7 @@ func main() {
 	}
 
 	// Fill the form PDF with our values.
-	err := fillpdf.Fill(form, "form.pdf", "filled.pdf")
+	err := fillpdf.Fill(form, "form.pdf", "filled.pdf", fillpdf.WithTempDir("/tmp"))
 	if err != nil {
 		log.Fatal(err)
 	}
