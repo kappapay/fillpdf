@@ -1,4 +1,4 @@
-module github.com/desertbit/fillpdf
+module github.com/kappapay/fillpdf
 
 go 1.20
 
