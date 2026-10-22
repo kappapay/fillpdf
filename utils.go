@@ -79,7 +79,7 @@ func runCommandInPath(dir, name string, args ...string) error {
 	// Start the command and wait for it to exit.
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf(strings.TrimSpace(stderr.String()))
+		return fmt.Errorf("%s", strings.TrimSpace(stderr.String()))
 	}
 
 	return nil
