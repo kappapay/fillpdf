@@ -1,6 +1,6 @@
 module github.com/kappapay/fillpdf
 
-go 1.20
+go 1.27.0
 
 require github.com/gdamore/encoding v1.0.0
 
